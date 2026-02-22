@@ -5,14 +5,23 @@ import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 import { useServiceWorkerUpdate } from '@/hooks/useServiceWorkerUpdate';
 import { useAppStore } from '@/stores';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 export const AppShell = observer(function AppShell() {
   const appStore = useAppStore();
   const isOnline = useOnlineStatus();
-  const { isInstallable, promptInstall } = useInstallPrompt();
+  const { isInstallable, isIOSSafari, promptInstall } = useInstallPrompt();
   const { needRefresh, updating, triggerUpdate } = useServiceWorkerUpdate();
   const [installDismissed, setInstallDismissed] = useState(false);
+  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
+
+  const handleInstallClick = useCallback(() => {
+    if (isIOSSafari) {
+      setShowIOSInstructions(true);
+    } else {
+      promptInstall();
+    }
+  }, [isIOSSafari, promptInstall]);
 
   useEffect(() => {
     appStore.setOnlineStatus(isOnline);
@@ -60,26 +69,33 @@ export const AppShell = observer(function AppShell() {
         </div>
       )}
       {isInstallable && !installDismissed && (
-        <div className="bg-accent/10 text-accent text-sm font-medium px-4 py-2 flex items-center justify-between shrink-0">
-          <span>Install ITG Collect for a better experience</span>
-          <div className="flex items-center gap-2 ml-4 shrink-0">
-            <button
-              onClick={promptInstall}
-              className="bg-accent text-secondary px-3 py-1 rounded-md text-xs font-semibold hover:bg-accent-light transition-colors"
-            >
-              Install
-            </button>
-            <button
-              onClick={() => setInstallDismissed(true)}
-              className="text-accent/60 hover:text-accent p-1 transition-colors"
-              aria-label="Dismiss"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
+        <div className="bg-accent/10 text-accent text-sm font-medium px-4 py-2 shrink-0">
+          <div className="flex items-center justify-between">
+            <span>Install ITG Collect for a better experience</span>
+            <div className="flex items-center gap-2 ml-4 shrink-0">
+              <button
+                onClick={handleInstallClick}
+                className="bg-accent text-secondary px-3 py-1 rounded-md text-xs font-semibold hover:bg-accent-light transition-colors"
+              >
+                Install
+              </button>
+              <button
+                onClick={() => { setInstallDismissed(true); setShowIOSInstructions(false); }}
+                className="text-accent/60 hover:text-accent p-1 transition-colors"
+                aria-label="Dismiss"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
           </div>
+          {showIOSInstructions && (
+            <div className="mt-2 text-xs leading-relaxed">
+              <p>Tap the <strong>Share</strong> button <span className="inline-block align-middle text-sm">&#xFEFF;□&#x2191;</span> in the toolbar, then tap <strong>"Add to Home Screen"</strong>.</p>
+            </div>
+          )}
         </div>
       )}
       <main className="flex-1 overflow-y-auto overflow-x-hidden">

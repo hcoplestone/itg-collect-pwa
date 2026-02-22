@@ -8,17 +8,35 @@ interface BeforeInstallPromptEvent extends Event {
 // Module-level variable shared across all hook consumers
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 
+function detectIOSSafari(): boolean {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS/.test(navigator.userAgent);
+  return isIOS && isSafari;
+}
+
+function isStandalone(): boolean {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as any).standalone === true;
+}
+
 export function useInstallPrompt() {
-  const [isInstallable, setIsInstallable] = useState(deferredPrompt !== null);
+  const [isIOSSafari] = useState(() => detectIOSSafari());
+  const [isInstallable, setIsInstallable] = useState(() => {
+    if (deferredPrompt !== null) return true;
+    if (detectIOSSafari() && !isStandalone()) return true;
+    return false;
+  });
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // Check if already installed (standalone mode)
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (isStandalone()) {
       setIsInstalled(true);
       return;
     }
 
+    // iOS Safari doesn't fire beforeinstallprompt, so isInstallable
+    // is already set via the initializer above
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       deferredPrompt = e as BeforeInstallPromptEvent;
@@ -52,5 +70,5 @@ export function useInstallPrompt() {
     return outcome === 'accepted';
   }, []);
 
-  return { isInstallable, isInstalled, promptInstall };
+  return { isInstallable, isInstalled, isIOSSafari, promptInstall };
 }
