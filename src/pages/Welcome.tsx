@@ -55,10 +55,20 @@ const Welcome = observer(function Welcome() {
             <div className="w-full mt-3 bg-accent/10 rounded-lg p-4 text-accent text-sm leading-relaxed">
               <p className="font-semibold mb-2">To install this app:</p>
               <ol className="list-decimal list-inside space-y-1">
-                <li>Tap the <strong>Share</strong> button <span className="inline-block align-middle text-base">&#xFEFF;□&#x2191;</span> in the toolbar</li>
+                <li>Tap the <strong>Share</strong> button <svg className="inline-block align-middle" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg> in the toolbar</li>
                 <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
                 <li>Tap <strong>"Add"</strong> to confirm</li>
               </ol>
+              <div className="flex gap-2 mt-3">
+                <div className="flex-1">
+                  <img src="/images/ios-share-sheet.png" alt="iOS Share sheet" className="w-full rounded-lg border border-accent/20" />
+                  <p className="text-xs text-accent/60 text-center mt-1">Tap "Add to Home Screen"</p>
+                </div>
+                <div className="flex-1">
+                  <img src="/images/ios-add-home.png" alt="Add to Home Screen" className="w-full rounded-lg border border-accent/20" />
+                  <p className="text-xs text-accent/60 text-center mt-1">Tap "Add" to confirm</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowIOSInstructions(false)}
                 className="mt-3 text-accent/60 hover:text-accent text-xs transition-colors"
