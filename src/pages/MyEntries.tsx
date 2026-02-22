@@ -33,7 +33,7 @@ const MyEntries = observer(function MyEntries() {
   };
 
   return (
-    <div className="flex flex-col h-dvh max-w-3xl mx-auto w-full bg-primary">
+    <div className="flex flex-col h-dvh w-full bg-primary">
       <Header
         title="My Entries"
         showBack
@@ -52,7 +52,7 @@ const MyEntries = observer(function MyEntries() {
       />
 
       {viewMode === 'list' ? (
-        <div className="flex-1 px-4 py-4 overflow-y-auto">
+        <div className="flex-1 px-4 py-4 overflow-y-auto w-full">
           <EntryList entries={entries} showDistance emptyMessage="You haven't created any entries yet" />
         </div>
       ) : (

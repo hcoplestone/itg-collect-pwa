@@ -35,11 +35,11 @@ export const WizardLayout = observer(function WizardLayout({
   };
 
   return (
-    <div className="flex flex-col h-dvh max-w-3xl mx-auto w-full bg-primary">
+    <div className="flex flex-col h-dvh w-full bg-primary">
       <Header title={title} showBack onBack={onBack} />
 
       {/* Progress Bar */}
-      <div className="px-4 pb-3 shrink-0">
+      <div className="px-4 pb-3 shrink-0 w-full">
         <div className="flex gap-1">
           {Array.from({ length: totalSteps }).map((_, i) => (
             <div
@@ -56,12 +56,12 @@ export const WizardLayout = observer(function WizardLayout({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-4">
+      <div className="flex-1 overflow-y-auto px-4 w-full">
         {children}
       </div>
 
       {/* Actions */}
-      <div className="px-4 pb-4 pt-2 shrink-0 flex flex-col gap-2">
+      <div className="px-4 pb-4 pt-2 shrink-0 flex flex-col gap-2 w-full">
         {onNext && (
           <button
             onClick={onNext}

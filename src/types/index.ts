@@ -21,6 +21,7 @@ export interface Entry {
   isDraft?: boolean;
   is_my_entry?: boolean;
   media_base64?: string[] | string;
+  tags?: Array<{ name: { en: string } }> | string[];
   distance?: number;
 }
 

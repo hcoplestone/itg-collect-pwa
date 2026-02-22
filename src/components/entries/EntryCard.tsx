@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from '@/stores';
 import { EntryThumbnail } from './EntryThumbnail';
+import { EntryCategoryIcon } from './EntryCategoryIcon';
 import type { Entry } from '@/types';
 
 interface EntryCardProps {
   entry: Entry;
   showDistance?: boolean;
+  showThumbnails?: boolean;
 }
 
-export const EntryCard = observer(function EntryCard({ entry, showDistance }: EntryCardProps) {
+export const EntryCard = observer(function EntryCard({ entry, showDistance, showThumbnails = true }: EntryCardProps) {
   const navigate = useNavigate();
   const userStore = useUserStore();
   const isFav = userStore.isFavourite(entry.id);
@@ -29,7 +31,11 @@ export const EntryCard = observer(function EntryCard({ entry, showDistance }: En
       onClick={handleClick}
       className="flex gap-3 p-3 bg-transparent rounded-lg cursor-pointer hover:bg-secondary-dark/30 transition-colors"
     >
-      <EntryThumbnail entryId={entry.id} />
+      {showThumbnails ? (
+        <EntryThumbnail entryId={entry.id} />
+      ) : (
+        <EntryCategoryIcon category={entry.category} />
+      )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-sm text-accent truncate">{entry.name}</h3>

@@ -57,7 +57,7 @@ const Review = observer(function Review() {
 
   if (success) {
     return (
-      <div className="flex flex-col h-dvh max-w-3xl mx-auto w-full bg-primary items-center justify-center">
+      <div className="flex flex-col h-dvh w-full bg-primary items-center justify-center">
         <CheckCircle className="w-16 h-16 text-success mb-4" />
         <p className="text-lg font-bold text-accent">Entry saved successfully!</p>
       </div>

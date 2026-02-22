@@ -33,7 +33,7 @@ const MyFavourites = observer(function MyFavourites() {
   };
 
   return (
-    <div className="flex flex-col h-dvh max-w-3xl mx-auto w-full bg-primary">
+    <div className="flex flex-col h-dvh w-full bg-primary">
       <Header
         title="My Favourites"
         showBack
@@ -52,7 +52,7 @@ const MyFavourites = observer(function MyFavourites() {
       />
 
       {viewMode === 'list' ? (
-        <div className="flex-1 px-4 py-4 overflow-y-auto">
+        <div className="flex-1 px-4 py-4 overflow-y-auto w-full">
           <EntryList entries={entries} showDistance emptyMessage="No favourites yet" />
         </div>
       ) : (
