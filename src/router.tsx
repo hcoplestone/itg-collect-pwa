@@ -40,6 +40,7 @@ export const router = createBrowserRouter([
           { path: '/explore', element: <Explore /> },
           { path: '/feedback', element: <Feedback /> },
           { path: '/account', element: <Account /> },
+          { path: '/drafts', element: <Drafts /> },
         ],
       },
 
@@ -47,7 +48,6 @@ export const router = createBrowserRouter([
       { path: '/entry/:id', element: <EntryDetail /> },
       { path: '/my-entries', element: <MyEntries /> },
       { path: '/my-favourites', element: <MyFavourites /> },
-      { path: '/drafts', element: <Drafts /> },
       { path: '/feedback-screenshots', element: <FeedbackScreenshots /> },
 
       // Entry creation wizard

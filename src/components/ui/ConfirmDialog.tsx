@@ -7,6 +7,7 @@ interface ConfirmDialogProps {
   title?: string;
   message?: string;
   confirmLabel?: string;
+  variant?: 'danger' | 'confirm';
 }
 
 export function ConfirmDialog({
@@ -16,6 +17,7 @@ export function ConfirmDialog({
   title = 'Delete',
   message = 'Are you sure? This action cannot be undone.',
   confirmLabel = 'Delete',
+  variant = 'danger',
 }: ConfirmDialogProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -64,7 +66,11 @@ export function ConfirmDialog({
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-3 rounded-xl bg-danger text-white text-sm font-medium transition-colors active:bg-danger/90"
+            className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+              variant === 'confirm'
+                ? 'bg-accent text-secondary active:bg-accent/90'
+                : 'bg-danger text-white active:bg-danger/90'
+            }`}
           >
             {confirmLabel}
           </button>

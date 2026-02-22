@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from '@/stores';
 import { Header } from '@/components/layout/Header';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { FileText, Heart, File, LogOut, ChevronRight } from 'lucide-react';
 
 const menuItems = [
@@ -13,6 +15,8 @@ const menuItems = [
 const Account = observer(function Account() {
   const navigate = useNavigate();
   const userStore = useUserStore();
+
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = () => {
     userStore.logout();
@@ -52,13 +56,24 @@ const Account = observer(function Account() {
 
         {/* Logout */}
         <button
-          onClick={handleLogout}
+          onClick={() => setShowLogoutConfirm(true)}
           className="flex items-center w-full px-4 py-4 bg-secondary rounded-xl shadow-sm hover:bg-secondary-dark transition-colors"
         >
           <LogOut className="w-5 h-5 text-danger mr-3" />
           <span className="text-sm font-medium text-danger">Logout</span>
         </button>
+
+        <p className="text-center text-xs text-text-secondary mt-6">v{__APP_VERSION__}</p>
       </div>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmLabel="Logout"
+      />
     </div>
   );
 });

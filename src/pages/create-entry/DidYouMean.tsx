@@ -5,12 +5,12 @@ import { useDraftsStore } from '@/stores';
 import { locationSuggestionsApi } from '@/api/location-suggestions';
 import { WizardLayout } from '@/components/entries/WizardLayout';
 import { Loader2 } from 'lucide-react';
-import type { DidYouMeanSuggestion } from '@/types';
+import type { GooglePlace } from '@/types';
 
 const DidYouMean = observer(function DidYouMean() {
   const navigate = useNavigate();
   const draftsStore = useDraftsStore();
-  const [suggestions, setSuggestions] = useState<DidYouMeanSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<GooglePlace[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const DidYouMean = observer(function DidYouMean() {
         draftsStore.lng,
         draftsStore.name
       );
-      setSuggestions(response.data);
+      setSuggestions((response.data?.results ?? []).slice(0, 5));
     } catch (error) {
       console.error('Error fetching did-you-mean suggestions:', error);
     } finally {
@@ -38,8 +38,9 @@ const DidYouMean = observer(function DidYouMean() {
     }
   };
 
-  const handleSelectSuggestion = (suggestion: string) => {
-    draftsStore.setName(suggestion);
+  const handleSelectSuggestion = (place: GooglePlace) => {
+    draftsStore.setGooglePlace(place);
+    draftsStore.setName(place.name);
     navigate('/create-entry/details');
   };
 
@@ -65,16 +66,16 @@ const DidYouMean = observer(function DidYouMean() {
         ) : suggestions.length > 0 ? (
           <div className="flex flex-col gap-2 mb-4">
             <p className="text-sm text-text-secondary mb-1">Did you mean one of these?</p>
-            {suggestions.map((suggestion, index) => (
+            {suggestions.map((place) => (
               <button
-                key={index}
-                onClick={() => handleSelectSuggestion(suggestion.suggestion)}
+                key={place.place_id}
+                onClick={() => handleSelectSuggestion(place)}
                 className="w-full text-left p-4 bg-secondary rounded-lg hover:bg-secondary-dark transition-colors"
               >
-                <p className="text-sm font-medium text-accent">{suggestion.suggestion}</p>
-                <p className="text-xs text-text-secondary">
-                  {Math.round(suggestion.confidence * 100)}% match
-                </p>
+                <p className="text-sm font-medium text-accent">{place.name}</p>
+                {place.vicinity && (
+                  <p className="text-xs text-text-secondary">{place.vicinity}</p>
+                )}
               </button>
             ))}
           </div>

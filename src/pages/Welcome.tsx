@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useUserStore } from '@/stores';
+import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 
 const Welcome = observer(function Welcome() {
   const navigate = useNavigate();
   const userStore = useUserStore();
+  const { isInstallable, promptInstall } = useInstallPrompt();
 
   useEffect(() => {
     if (userStore.isAuthenticated) {
@@ -28,10 +30,18 @@ const Welcome = observer(function Welcome() {
       </p>
       <button
         onClick={() => navigate('/login')}
-        className="bg-accent text-secondary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-accent-light transition-colors"
+        className="w-full bg-accent text-secondary py-4 rounded-lg text-lg font-semibold hover:bg-accent-light transition-colors"
       >
         Let's Go &rarr;
       </button>
+      {isInstallable && (
+        <button
+          onClick={promptInstall}
+          className="w-full mt-4 border border-accent text-accent py-4 rounded-lg text-lg font-semibold hover:bg-accent/10 transition-colors"
+        >
+          Install App
+        </button>
+      )}
     </div>
   );
 });

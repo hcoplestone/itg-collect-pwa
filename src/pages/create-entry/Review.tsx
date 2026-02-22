@@ -153,7 +153,7 @@ const Review = observer(function Review() {
             value={draftsStore.review}
             onChange={(e) => draftsStore.setReview(e.target.value)}
             rows={3}
-            className="w-full bg-secondary border border-accent/20 rounded-lg px-4 py-3 text-sm text-accent placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent/30 resize-none"
+            className="w-full bg-secondary rounded-lg px-4 py-3 text-sm text-accent placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent/30 resize-none"
           />
         </div>
 

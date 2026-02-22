@@ -75,7 +75,8 @@ const EntryDetail = observer(function EntryDetail() {
     try {
       await entriesApi.deleteEntry(entry.id);
       entriesStore.removeEntry(entry.id);
-      navigate(-1);
+      entriesStore.fetch(true);
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Error deleting entry:', error);
     } finally {
