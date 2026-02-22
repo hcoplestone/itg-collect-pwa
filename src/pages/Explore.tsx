@@ -34,7 +34,7 @@ const Explore = observer(function Explore() {
 
   return (
     <div className="flex flex-col h-full">
-      <Header title="Explore" />
+      <Header title="Explore" showLogo />
 
       {/* Search Bar */}
       <div className="px-4 pb-3">

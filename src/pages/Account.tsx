@@ -21,11 +21,11 @@ const Account = observer(function Account() {
 
   return (
     <div className="flex flex-col h-full">
-      <Header title="Account" />
+      <Header title="Account" showLogo />
 
-      <div className="px-4 py-6">
+      <div className="px-4 pt-2 pb-6">
         {/* User Info */}
-        <div className="bg-secondary rounded-xl p-5 mb-6">
+        <div className="bg-secondary rounded-xl p-5 mb-6 items-center text-center flex flex-col shadow-sm">
           <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-3">
             <span className="text-2xl font-bold text-secondary">
               {userStore.displayName.charAt(0).toUpperCase()}
@@ -36,7 +36,7 @@ const Account = observer(function Account() {
         </div>
 
         {/* Menu Items */}
-        <div className="bg-secondary rounded-xl overflow-hidden mb-6">
+        <div className="bg-secondary rounded-xl overflow-hidden mb-6 shadow-sm">
           {menuItems.map(({ icon: Icon, label, to }) => (
             <button
               key={to}
@@ -53,7 +53,7 @@ const Account = observer(function Account() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex items-center w-full px-4 py-4 bg-danger/10 rounded-xl hover:bg-danger/20 transition-colors"
+          className="flex items-center w-full px-4 py-4 bg-secondary rounded-xl shadow-sm hover:bg-secondary-dark transition-colors"
         >
           <LogOut className="w-5 h-5 text-danger mr-3" />
           <span className="text-sm font-medium text-danger">Logout</span>

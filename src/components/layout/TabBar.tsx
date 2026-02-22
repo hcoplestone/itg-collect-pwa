@@ -1,12 +1,12 @@
-import { Home, Compass, Camera, MessageSquare, User } from 'lucide-react';
+import { IoHome, IoCompass, IoCamera, IoChatbubbleEllipses, IoPerson } from 'react-icons/io5';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const tabs = [
-  { to: '/home', icon: Home, label: 'Home' },
-  { to: '/explore', icon: Compass, label: 'Explore' },
-  { to: '/create-entry/map-select', icon: Camera, label: 'Add', isCenter: true },
-  { to: '/feedback', icon: MessageSquare, label: 'Feedback' },
-  { to: '/account', icon: User, label: 'Account' },
+  { to: '/home', icon: IoHome, label: 'Home' },
+  { to: '/explore', icon: IoCompass, label: 'Explore' },
+  { to: '/create-entry/map-select', icon: IoCamera, label: 'Add', isCenter: true },
+  { to: '/feedback', icon: IoChatbubbleEllipses, label: 'Feedback' },
+  { to: '/account', icon: IoPerson, label: 'Account' },
 ];
 
 export function TabBar() {
@@ -24,7 +24,7 @@ export function TabBar() {
               className="flex flex-col items-center justify-center -mt-9 z-50"
             >
               <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full bg-white shadow-lg hover:bg-accent hover:text-white transition-colors group">
-                <Icon className="w-[22px] h-[22px] text-text-secondary group-hover:text-white" />
+                <Icon size={20} className="text-text-secondary group-hover:text-white" />
               </div>
             </button>
           );
@@ -35,12 +35,12 @@ export function TabBar() {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 px-3 pt-2 ${
+              `flex flex-col items-center justify-center gap-1 px-3 h-full ${
                 isActive ? 'text-accent' : 'text-text-secondary'
               }`
             }
           >
-            <Icon className="w-6 h-6" />
+            <Icon size={20} />
             <span className="text-[10px] font-medium">{label}</span>
           </NavLink>
         );

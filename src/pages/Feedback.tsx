@@ -41,7 +41,7 @@ const Feedback = observer(function Feedback() {
   if (success) {
     return (
       <div className="flex flex-col h-full">
-        <Header title="Feedback" />
+        <Header title="Feedback" showLogo />
         <div className="flex-1 flex flex-col items-center justify-center px-6">
           <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mb-4">
             <span className="text-3xl">&#10003;</span>
@@ -63,10 +63,10 @@ const Feedback = observer(function Feedback() {
 
   return (
     <div className="flex flex-col h-full">
-      <Header title="Feedback" />
+      <Header title="Feedback" showLogo />
 
-      <div className="flex-1 px-4 py-4 overflow-y-auto">
-        <p className="text-sm text-text-secondary mb-4">
+      <div className="flex-1 px-4 pt-2 pb-4 overflow-y-auto">
+        <p className="text-sm text-text-secondary text-center mb-4">
           We'd love to hear your thoughts! Share any feedback, suggestions, or issues.
         </p>
 

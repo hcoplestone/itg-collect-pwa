@@ -54,7 +54,7 @@ const Home = observer(function Home() {
     ? { lat: latitude, lng: longitude }
     : null;
 
-  const categories = ['all', ...entriesStore.allCategories];
+  const categories = ['all', 'See/Do', 'Accommodation', 'Transport', 'Food/Drink'];
   const recentEntries = entriesStore.getRecentlyAddedByCategory(selectedCategory);
 
   const handleEntryClick = (entry: Entry) => {
@@ -92,10 +92,10 @@ const Home = observer(function Home() {
         <div className="absolute top-0 left-0 right-0 z-[1000] bg-primary shadow-md">
           {/* Logo */}
           <div className="flex justify-center pt-3 pb-2">
-            <img src="/images/logo-new.png" className="h-[52px] object-contain" alt="Inside Travel" />
+            <img src="/images/logo-new.png" className="h-[42px] object-contain" alt="Inside Travel" />
           </div>
           {/* Category Pills */}
-          <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide items-center">
+          <div className="flex gap-2 px-4 pb-1 overflow-x-auto scrollbar-hide items-center">
             <button
               onClick={() => navigate('/explore')}
               className="flex items-center justify-center w-9 h-9 rounded-lg bg-transparent text-accent shrink-0"

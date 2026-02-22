@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 interface HeaderProps {
   title: string;
   showBack?: boolean;
+  showLogo?: boolean;
   onBack?: () => void;
   rightAction?: React.ReactNode;
 }
 
-export function Header({ title, showBack = false, onBack, rightAction }: HeaderProps) {
+export function Header({ title, showBack = false, showLogo = false, onBack, rightAction }: HeaderProps) {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -20,21 +21,28 @@ export function Header({ title, showBack = false, onBack, rightAction }: HeaderP
   };
 
   return (
-    <header className="flex items-center h-[60px] px-4 bg-primary shrink-0 shadow-sm">
-      <div className="w-10">
-        {showBack && (
-          <button
-            onClick={handleBack}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary shadow-sm hover:bg-secondary-dark transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-accent" />
-          </button>
-        )}
+    <header className="bg-primary shrink-0">
+      {showLogo && (
+        <div className="flex justify-center pt-3 pb-2">
+          <img src="/images/logo-new.png" className="h-[42px] object-contain" alt="Inside Travel" />
+        </div>
+      )}
+      <div className="flex items-center px-4 pb-2 pt-3">
+        <div className="w-10">
+          {showBack && (
+            <button
+              onClick={handleBack}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary shadow-sm hover:bg-secondary-dark transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-accent" />
+            </button>
+          )}
+        </div>
+        <h1 className="flex-1 text-center text-lg font-semibold text-accent truncate">
+          {title}
+        </h1>
+        <div className="w-10 flex justify-end">{rightAction}</div>
       </div>
-      <h1 className="flex-1 text-center text-lg font-semibold text-accent truncate">
-        {title}
-      </h1>
-      <div className="w-10 flex justify-end">{rightAction}</div>
     </header>
   );
 }
