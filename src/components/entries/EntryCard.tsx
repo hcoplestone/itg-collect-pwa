@@ -1,7 +1,8 @@
-import { Heart, MapPin } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from '@/stores';
+import { EntryThumbnail } from './EntryThumbnail';
 import type { Entry } from '@/types';
 
 interface EntryCardProps {
@@ -13,9 +14,6 @@ export const EntryCard = observer(function EntryCard({ entry, showDistance }: En
   const navigate = useNavigate();
   const userStore = useUserStore();
   const isFav = userStore.isFavourite(entry.id);
-
-  const photos = Array.isArray(entry.media_base64) ? entry.media_base64 : [];
-  const firstPhoto = photos[0];
 
   const handleClick = () => {
     navigate(`/entry/${entry.id}`);
@@ -31,17 +29,7 @@ export const EntryCard = observer(function EntryCard({ entry, showDistance }: En
       onClick={handleClick}
       className="flex gap-3 p-3 bg-transparent rounded-lg cursor-pointer hover:bg-secondary-dark/30 transition-colors"
     >
-      {firstPhoto ? (
-        <img
-          src={firstPhoto}
-          alt={entry.name}
-          className="w-16 h-16 rounded-md object-cover shrink-0"
-        />
-      ) : (
-        <div className="w-16 h-16 rounded-md bg-primary-light flex items-center justify-center shrink-0">
-          <MapPin className="w-6 h-6 text-text-secondary" />
-        </div>
-      )}
+      <EntryThumbnail entryId={entry.id} />
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-sm text-accent truncate">{entry.name}</h3>

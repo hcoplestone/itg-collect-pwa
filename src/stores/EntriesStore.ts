@@ -16,6 +16,10 @@ export class EntriesStore {
   error: string | null = null;
   recentlyAddedUpdateKey = 0;
 
+  // Media cache for individual entry thumbnails
+  mediaCache: Map<string, string[]> = new Map();
+  private mediaLoadingSet: Set<string> = new Set();
+
   // Search and filtering state
   searchQuery = '';
   onlyShowMyEntries = false;
@@ -196,6 +200,34 @@ export class EntriesStore {
 
   async forceRefresh() {
     await this.fetch(true);
+  }
+
+  getMedia(entryId: string): string[] | undefined {
+    return this.mediaCache.get(entryId);
+  }
+
+  async fetchMediaForEntry(entryId: string) {
+    if (this.mediaCache.has(entryId) || this.mediaLoadingSet.has(entryId)) {
+      return;
+    }
+
+    this.mediaLoadingSet.add(entryId);
+
+    try {
+      const response = await entriesApi.getEntry(entryId);
+      const media = this.parseMediaBase64(response.data.media_base64);
+
+      runInAction(() => {
+        this.mediaCache.set(entryId, media);
+      });
+    } catch (error) {
+      console.warn('EntriesStore: Failed to fetch media for entry:', entryId, error);
+      runInAction(() => {
+        this.mediaCache.set(entryId, []);
+      });
+    } finally {
+      this.mediaLoadingSet.delete(entryId);
+    }
   }
 
   removeEntry(entryId: string) {
@@ -429,5 +461,6 @@ export class EntriesStore {
     this.recentlyAddedUpdateKey = 0;
     this.clearFilters();
     this.clearCache();
+    this.mediaCache.clear();
   }
 }

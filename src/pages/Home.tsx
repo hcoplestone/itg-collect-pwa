@@ -3,18 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useEntriesStore } from '@/stores';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { LeafletMap } from '@/components/maps/LeafletMap';
 import { EntryCard } from '@/components/entries/EntryCard';
 import { CategoryPill } from '@/components/entries/CategoryPill';
 import { Search, Loader2 } from 'lucide-react';
 import type { Entry } from '@/types';
 
+const CLOSED_HEIGHT = 220;
+const OPEN_FRACTION = 0.6;
+const DRAG_THRESHOLD = 50;
+
 const Home = observer(function Home() {
   const navigate = useNavigate();
   const entriesStore = useEntriesStore();
   const { latitude, longitude } = useGeolocation();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [panelOpen, setPanelOpen] = useState(false);
+
+  const {
+    sheetY,
+    isDragging,
+    isOpen,
+    openY,
+    closedY,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    close,
+  } = useBottomSheet({
+    closedHeight: CLOSED_HEIGHT,
+    openFraction: OPEN_FRACTION,
+    dragThreshold: DRAG_THRESHOLD,
+  });
 
   useEffect(() => {
     entriesStore.fetch();
@@ -43,8 +63,21 @@ const Home = observer(function Home() {
 
   const countLabel = `${recentEntries.length} ${recentEntries.length === 1 ? 'place' : 'places'}${selectedCategory !== 'all' ? ` in ${selectedCategory}` : ''}`;
 
+  // Overlay opacity: interpolate from 0 to 0.4 based on sheet position
+  const overlayOpacity = closedY === openY
+    ? 0
+    : 0.4 * (1 - (sheetY - openY) / (closedY - openY));
+
+  // Panel height = full open height (viewport * openFraction)
+  const panelHeight = window.innerHeight * OPEN_FRACTION;
+
+  // Continuously interpolate list height based on sheet position
+  const headerHeight = 100;
+  const visiblePanelHeight = closedY - sheetY + CLOSED_HEIGHT;
+  const listMaxHeight = Math.max(0, visiblePanelHeight - headerHeight);
+
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-full relative overflow-hidden">
       {/* Map */}
       <div className="flex-1 relative">
         <LeafletMap
@@ -80,6 +113,16 @@ const Home = observer(function Home() {
           </div>
         </div>
 
+        {/* Dim overlay when panel is open */}
+        <div
+          className="absolute inset-0 z-[1001]"
+          style={{
+            backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`,
+            pointerEvents: overlayOpacity > 0.01 ? 'auto' : 'none',
+          }}
+          onClick={close}
+        />
+
         {entriesStore.isLoading && (
           <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white rounded-full px-4 py-2 shadow-md flex items-center gap-2 z-[1001]">
             <Loader2 className="w-4 h-4 animate-spin text-accent" />
@@ -90,26 +133,40 @@ const Home = observer(function Home() {
 
       {/* Bottom Panel */}
       <div
-        className={`bg-secondary rounded-t-2xl transition-all duration-300 shadow-[0_-4px_8px_rgba(0,0,0,0.08)] z-[1000] ${
-          panelOpen ? 'max-h-[60%]' : 'max-h-[220px]'
-        }`}
+        className="absolute left-0 right-0 bg-secondary rounded-t-2xl shadow-[0_-4px_8px_rgba(0,0,0,0.08)] z-[1002]"
+        style={{
+          height: panelHeight,
+          top: 0,
+          transform: `translateY(${sheetY}px)`,
+          transition: isDragging ? 'none' : 'transform 300ms ease-out',
+          willChange: 'transform',
+        }}
       >
-        {/* Drag Handle */}
-        <button
-          onClick={() => setPanelOpen(!panelOpen)}
-          className="w-full flex justify-center py-2"
+        {/* Drag Handle + Title (draggable region) */}
+        <div
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          style={{ touchAction: 'none' }}
+          className="cursor-grab active:cursor-grabbing select-none"
         >
-          <div className="w-10 h-1.5 bg-accent rounded-full mt-3 mb-1" />
-        </button>
+          {/* Drag Handle */}
+          <div className="w-full flex justify-center py-2">
+            <div className="w-10 h-1.5 bg-accent rounded-full mt-3 mb-1" />
+          </div>
 
-        {/* Title & Count */}
-        <div className="px-4 pb-3">
-          <h3 className="text-2xl font-bold text-accent text-center">Recently Added</h3>
-          <p className="text-sm text-text-secondary text-center mt-0.5">{countLabel}</p>
+          {/* Title & Count */}
+          <div className="px-4 pb-3">
+            <h3 className="text-2xl font-bold text-accent text-center">Recently Added</h3>
+            <p className="text-sm text-text-secondary text-center mt-0.5">{countLabel}</p>
+          </div>
         </div>
 
         {/* Entry List */}
-        <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: panelOpen ? 'calc(60vh - 140px)' : '80px' }}>
+        <div
+          className="px-4 pb-4 overflow-y-auto"
+          style={{ maxHeight: listMaxHeight }}
+        >
           {recentEntries.length === 0 ? (
             <p className="text-xs text-text-secondary text-center">No entries yet</p>
           ) : (
