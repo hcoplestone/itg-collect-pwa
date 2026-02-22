@@ -1,9 +1,9 @@
 import apiClient from './client';
-import type { LocationSuggestion, DidYouMeanSuggestion } from '@/types';
+import type { GooglePlace } from '@/types';
 
 export const locationSuggestionsApi = {
   getSuggestions(lat: number, lng: number, searchQuery: string = '') {
-    return apiClient.post<LocationSuggestion[]>('/location-suggestions', {
+    return apiClient.post<{ results: GooglePlace[] }>('/location-suggestions', {
       lat,
       lng,
       keyword: searchQuery,
@@ -11,7 +11,7 @@ export const locationSuggestionsApi = {
   },
 
   didYouMean(lat: number, lng: number, searchQuery: string = '') {
-    return apiClient.post<DidYouMeanSuggestion[]>('/did-you-mean', {
+    return apiClient.post<{ results: GooglePlace[] }>('/did-you-mean', {
       lat,
       lng,
       keyword: searchQuery,

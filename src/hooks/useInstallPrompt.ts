@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+// Module-level variable shared across all hook consumers
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
+
 export function useInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+  const [isInstallable, setIsInstallable] = useState(deferredPrompt !== null);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
@@ -19,14 +21,14 @@ export function useInstallPrompt() {
 
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      deferredPrompt = e as BeforeInstallPromptEvent;
       setIsInstallable(true);
     };
 
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setIsInstallable(false);
-      setDeferredPrompt(null);
+      deferredPrompt = null;
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
@@ -38,17 +40,17 @@ export function useInstallPrompt() {
     };
   }, []);
 
-  const promptInstall = async () => {
+  const promptInstall = useCallback(async () => {
     if (!deferredPrompt) return false;
 
     await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
 
-    setDeferredPrompt(null);
+    deferredPrompt = null;
     setIsInstallable(false);
 
     return outcome === 'accepted';
-  };
+  }, []);
 
   return { isInstallable, isInstalled, promptInstall };
 }

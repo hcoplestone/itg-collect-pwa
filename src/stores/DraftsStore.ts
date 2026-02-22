@@ -204,6 +204,10 @@ export class DraftsStore {
     return this.currentDraft?.price || null;
   }
 
+  get googlePlace(): any {
+    return this.currentDraft?.googlePlace || null;
+  }
+
   get createdAt(): string | null {
     return this.currentDraft?.createdAt || null;
   }
@@ -300,6 +304,13 @@ export class DraftsStore {
   setPrice(price: number | null) {
     if (this.currentDraft) {
       this.currentDraft.price = price;
+      this.saveCurrentDraftLocally();
+    }
+  }
+
+  setGooglePlace(place: any) {
+    if (this.currentDraft) {
+      this.currentDraft.googlePlace = place;
       this.saveCurrentDraftLocally();
     }
   }

@@ -21,6 +21,7 @@ export interface Entry {
   isDraft?: boolean;
   is_my_entry?: boolean;
   media_base64?: string[] | string;
+  tags?: Array<{ name: { en: string } }> | string[];
   distance?: number;
 }
 
@@ -67,25 +68,6 @@ export interface Draft {
   comments: string;
   price?: number | null;
   currentScreen?: string;
-}
-
-export interface LocationSuggestion {
-  id: string;
-  name: string;
-  description?: string;
-  lat: number;
-  lng: number;
-  address?: string;
-  category?: string;
-  google_place_id?: string;
-  rating?: number;
-  price_level?: number;
-  photo_reference?: string;
-}
-
-export interface DidYouMeanSuggestion {
-  suggestion: string;
-  confidence: number;
 }
 
 export interface GooglePlace {

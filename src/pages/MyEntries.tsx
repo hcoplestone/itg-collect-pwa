@@ -33,26 +33,39 @@ const MyEntries = observer(function MyEntries() {
   };
 
   return (
-    <div className="flex flex-col h-dvh max-w-3xl mx-auto w-full bg-primary">
-      <Header
-        title="My Entries"
-        showBack
-        rightAction={
+    <div className="flex flex-col h-dvh w-full bg-primary">
+      <Header title="My Entries" showBack />
+
+      {/* Segmented tabs */}
+      <div className="px-4 pb-3">
+        <div className="flex bg-secondary rounded-xl p-1">
           <button
-            onClick={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
-            className="p-2"
+            onClick={() => setViewMode('list')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === 'list'
+                ? 'bg-accent text-secondary shadow-sm'
+                : 'text-text-secondary'
+            }`}
           >
-            {viewMode === 'list' ? (
-              <MapIcon className="w-5 h-5 text-accent" />
-            ) : (
-              <List className="w-5 h-5 text-accent" />
-            )}
+            <List className="w-4 h-4" />
+            List
           </button>
-        }
-      />
+          <button
+            onClick={() => setViewMode('map')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === 'map'
+                ? 'bg-accent text-secondary shadow-sm'
+                : 'text-text-secondary'
+            }`}
+          >
+            <MapIcon className="w-4 h-4" />
+            Map
+          </button>
+        </div>
+      </div>
 
       {viewMode === 'list' ? (
-        <div className="flex-1 px-4 py-4 overflow-y-auto">
+        <div className="flex-1 px-4 py-2 overflow-y-auto w-full">
           <EntryList entries={entries} showDistance emptyMessage="You haven't created any entries yet" />
         </div>
       ) : (

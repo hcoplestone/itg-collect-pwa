@@ -5,14 +5,14 @@ import { useDraftsStore } from '@/stores';
 import { locationSuggestionsApi } from '@/api/location-suggestions';
 import { WizardLayout } from '@/components/entries/WizardLayout';
 import { Search, MapPin, Loader2 } from 'lucide-react';
-import type { LocationSuggestion } from '@/types';
+import type { GooglePlace } from '@/types';
 
 const Location = observer(function Location() {
   const navigate = useNavigate();
   const draftsStore = useDraftsStore();
   const [activeTab, setActiveTab] = useState<'suggestions' | 'manual'>('suggestions');
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<GooglePlace[]>([]);
   const [loading, setLoading] = useState(false);
   const [manualName, setManualName] = useState(draftsStore.name);
 
@@ -30,7 +30,8 @@ const Location = observer(function Location() {
         draftsStore.lng,
         query
       );
-      setSuggestions(response.data);
+      const data = response.data;
+      setSuggestions(data?.results ?? []);
     } catch (error) {
       console.error('Error fetching suggestions:', error);
     } finally {
@@ -42,11 +43,12 @@ const Location = observer(function Location() {
     fetchSuggestions(searchQuery);
   };
 
-  const handleSelectSuggestion = (suggestion: LocationSuggestion) => {
-    draftsStore.setName(suggestion.name);
-    if (suggestion.lat && suggestion.lng) {
-      draftsStore.setLat(suggestion.lat);
-      draftsStore.setLng(suggestion.lng);
+  const handleSelectSuggestion = (place: GooglePlace) => {
+    draftsStore.setGooglePlace(place);
+    draftsStore.setName(place.name);
+    if (place.geometry?.location) {
+      draftsStore.setLat(place.geometry.location.lat);
+      draftsStore.setLng(place.geometry.location.lng);
     }
     navigate('/create-entry/details');
   };
@@ -116,17 +118,17 @@ const Location = observer(function Location() {
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              {suggestions.map((suggestion) => (
+              {suggestions.map((place) => (
                 <button
-                  key={suggestion.id}
-                  onClick={() => handleSelectSuggestion(suggestion)}
+                  key={place.place_id}
+                  onClick={() => handleSelectSuggestion(place)}
                   className="flex items-start gap-3 p-3 bg-secondary rounded-lg text-left hover:bg-secondary-dark transition-colors"
                 >
                   <MapPin className="w-4 h-4 text-accent mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-accent">{suggestion.name}</p>
-                    {suggestion.address && (
-                      <p className="text-xs text-text-secondary">{suggestion.address}</p>
+                    <p className="text-sm font-medium text-accent">{place.name}</p>
+                    {place.vicinity && (
+                      <p className="text-xs text-text-secondary">{place.vicinity}</p>
                     )}
                   </div>
                 </button>
@@ -151,7 +153,7 @@ const Location = observer(function Location() {
             placeholder="Enter the name of the place"
             value={manualName}
             onChange={(e) => setManualName(e.target.value)}
-            className="w-full bg-secondary border border-accent/20 rounded-lg px-4 py-3 text-sm text-accent placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent/30"
+            className="w-full bg-secondary rounded-lg px-4 py-3 text-sm text-accent placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent/30"
           />
         </div>
       )}

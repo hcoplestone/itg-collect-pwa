@@ -50,23 +50,12 @@ const MapSelect = observer(function MapSelect() {
       title="Select Location"
       step={1}
       onNext={handleNext}
+      nextLabel="Select Location →"
       nextDisabled={!draftsStore.lat || !draftsStore.lng}
+      fullBleed
     >
-      <div className="flex flex-col gap-3 h-full">
-        <p className="text-sm text-text-secondary">
-          Tap the map to select the location, or use your current location.
-        </p>
-
-        <button
-          onClick={handleUseMyLocation}
-          disabled={!latitude || !longitude}
-          className="flex items-center gap-2 px-4 py-2 bg-secondary rounded-lg text-sm font-medium text-accent disabled:opacity-50 self-start"
-        >
-          <Crosshair className="w-4 h-4" />
-          Use My Location
-        </button>
-
-        <div className="flex-1 min-h-[300px] rounded-lg overflow-hidden">
+      <div className="flex flex-col h-full relative">
+        <div className="flex-1 overflow-hidden">
           <InteractiveMap
             initialCenter={
               latitude && longitude
@@ -79,11 +68,14 @@ const MapSelect = observer(function MapSelect() {
           />
         </div>
 
-        {selectedLocation && (
-          <p className="text-xs text-text-secondary text-center">
-            {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
-          </p>
-        )}
+        <button
+          onClick={handleUseMyLocation}
+          disabled={!latitude || !longitude}
+          className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-2 bg-secondary rounded-full shadow-md text-sm font-medium text-accent disabled:opacity-50"
+        >
+          <Crosshair className="w-4 h-4" />
+          Use My Location
+        </button>
       </div>
     </WizardLayout>
   );

@@ -58,6 +58,11 @@ body {
   flex-direction: column;
 }
 
+/* Safe area utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Leaflet map fixes */
 .leaflet-container {
   width: 100%;

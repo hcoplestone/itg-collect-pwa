@@ -31,7 +31,7 @@ const Details = observer(function Details() {
           value={draftsStore.description}
           onChange={(e) => draftsStore.setDescription(e.target.value)}
           rows={5}
-          className="w-full bg-secondary border border-accent/20 rounded-lg px-4 py-3 text-sm text-accent placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent/30 resize-none"
+          className="w-full bg-secondary rounded-lg px-4 py-3 text-sm text-accent placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent/30 resize-none"
         />
       </div>
     </WizardLayout>
