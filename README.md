@@ -1,73 +1,100 @@
-# React + TypeScript + Vite
+# ITG Collect PWA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Share discoveries and find nearby recommendations. A mobile-first Progressive Web App for creating, browsing, and exploring location-based entries on an interactive map.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** with TypeScript
+- **Vite** — build tooling and dev server
+- **Tailwind CSS v4** — utility-first styling
+- **MobX** — state management
+- **React Router v7** — client-side routing
+- **Leaflet / React Leaflet** — interactive maps
+- **Axios** — HTTP client with interceptors
+- **vite-plugin-pwa** — service worker and manifest generation
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js >= 18
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env` file in the project root:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_API_URL=<your-api-base-url>
+VITE_GOOGLE_PLACES_API_KEY=<your-google-places-key>
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+### Preview
+
+```bash
+npm run preview
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+## Project Structure
+
+```
+src/
+├── api/            # Axios client and API service modules (auth, entries, feedback, location)
+├── assets/         # Static images and icons
+├── components/
+│   ├── entries/    # EntryCard, EntryList
+│   ├── layout/     # AppShell, AuthGuard, Header, TabBar
+│   ├── maps/       # LeafletMap, InteractiveMap
+│   ├── photos/     # PhotoPicker, PhotoGrid
+│   └── ui/         # Shared UI primitives (CategoryPill, ConfirmDialog, etc.)
+├── config/         # Google Places configuration
+├── constants/      # Theme tokens and app constants
+├── hooks/          # Custom hooks (geolocation, image picker, online status, install prompt)
+├── pages/
+│   └── create-entry/  # Multi-step entry creation wizard
+├── services/       # Google Places service
+├── stores/         # MobX stores (Root, App, User, Entries, Drafts, Feedback)
+├── styles/         # Global CSS and Tailwind imports
+├── types/          # TypeScript type definitions
+└── utils/          # Utility functions
+```
+
+## Key Features
+
+- **Map-based browsing** — explore entries on an interactive Leaflet map with category filters
+- **Entry creation wizard** — multi-step flow with map selection, location suggestions, tags, photos, and review
+- **Search, filter & sort** — find entries by keyword, category, or proximity
+- **Favourites** — save and revisit entries
+- **Drafts** — auto-save in-progress entries to resume later
+- **Offline support** — service worker caching with online/offline detection
+- **PWA installable** — add to home screen on mobile and desktop
+
+## Architecture Overview
+
+- **State management** — MobX stores are provided via React context through a `RootStore`. Stores handle auth state, entries, drafts, and feedback.
+- **API layer** — Axios instance with request/response interceptors for auth token injection and error handling. Tokens are persisted in `localStorage`.
+- **Auth flow** — `AuthGuard` component wraps protected routes, redirecting unauthenticated users to the welcome screen.
+- **Routing** — React Router v7 with a nested layout (`AppShell` + `TabBar`) and five main tabs: Home, Explore, Create, My Entries, and Account.
