@@ -5,6 +5,7 @@ import { useEntriesStore, useUserStore } from '@/stores';
 import { entriesApi } from '@/api/entries';
 import { Header } from '@/components/layout/Header';
 import { LeafletMap } from '@/components/maps/LeafletMap';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Heart, Trash2, MapPin, Loader2, Navigation, User, Calendar } from 'lucide-react';
 import type { Entry } from '@/types';
 import { getRelativeTime } from '@/utils/time';
@@ -17,6 +18,7 @@ const EntryDetail = observer(function EntryDetail() {
   const [entry, setEntry] = useState<Entry | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
   useEffect(() => {
@@ -62,9 +64,13 @@ const EntryDetail = observer(function EntryDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const handleDelete = async () => {
-    if (!entry || !confirm('Are you sure you want to delete this entry?')) return;
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!entry) return;
+    setShowDeleteConfirm(false);
     setDeleting(true);
     try {
       await entriesApi.deleteEntry(entry.id);
@@ -72,7 +78,6 @@ const EntryDetail = observer(function EntryDetail() {
       navigate(-1);
     } catch (error) {
       console.error('Error deleting entry:', error);
-      alert('Failed to delete entry');
     } finally {
       setDeleting(false);
     }
@@ -239,6 +244,14 @@ const EntryDetail = observer(function EntryDetail() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        title="Delete Entry"
+        message="Are you sure you want to delete this entry? This action cannot be undone."
+      />
     </div>
   );
 });
