@@ -1,0 +1,5 @@
+export const GOOGLE_PLACES_CONFIG = {
+  USE_REAL_API: true,
+  DEFAULT_RADIUS: 2000,
+  MAX_RESULTS: 20,
+};
