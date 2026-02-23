@@ -261,7 +261,7 @@ const EntryDetail = observer(function EntryDetail() {
                   onClick={handleDelete}
                   disabled={deleting}
                   whileTap={TAP_SCALE}
-                  className="flex items-center gap-2 w-full px-4 py-3 bg-danger/10 rounded-lg text-danger text-sm font-medium hover:bg-danger/20 transition-colors disabled:opacity-60"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-danger rounded-lg text-secondary text-sm font-medium hover:bg-danger/90 transition-colors disabled:opacity-60"
                 >
                   {deleting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
