@@ -44,7 +44,7 @@ const Tags = observer(function Tags() {
       title="Tags"
       step={5}
       onNext={handleNext}
-      onBack={() => navigate('/create-entry/details')}
+      onBack={() => navigate(-1)}
     >
       <div className="py-4">
         <p className="text-sm text-text-secondary mb-4">

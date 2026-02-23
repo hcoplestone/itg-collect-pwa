@@ -70,7 +70,7 @@ const Location = observer(function Location() {
       step={2}
       onNext={activeTab === 'manual' ? handleNext : undefined}
       nextDisabled={activeTab === 'manual' && !manualName.trim()}
-      onBack={() => navigate('/create-entry/map-select')}
+      onBack={() => navigate(-1)}
     >
       {/* Tabs */}
       <div className="flex gap-1 bg-secondary rounded-lg p-1 mb-4">

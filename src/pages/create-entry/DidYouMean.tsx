@@ -52,7 +52,7 @@ const DidYouMean = observer(function DidYouMean() {
     <WizardLayout
       title="Did You Mean?"
       step={3}
-      onBack={() => navigate('/create-entry/location')}
+      onBack={() => navigate(-1)}
     >
       <div className="py-4">
         <p className="text-sm text-text-secondary mb-4">

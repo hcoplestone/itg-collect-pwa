@@ -16,7 +16,7 @@ const Details = observer(function Details() {
       title="Details"
       step={4}
       onNext={handleNext}
-      onBack={() => navigate('/create-entry/location')}
+      onBack={() => navigate(-1)}
     >
       <div className="py-4">
         <p className="text-sm text-text-secondary mb-4">

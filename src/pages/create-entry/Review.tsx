@@ -71,7 +71,7 @@ const Review = observer(function Review() {
       onNext={handleSubmit}
       nextLabel={submitting ? 'Submitting...' : 'Submit Entry'}
       nextDisabled={submitting}
-      onBack={() => navigate('/create-entry/photos')}
+      onBack={() => navigate(-1)}
       showSaveDraft={!submitting}
     >
       <div className="py-4">
