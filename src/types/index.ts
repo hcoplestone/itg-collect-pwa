@@ -20,6 +20,7 @@ export interface Entry {
   google_place_id?: string;
   isDraft?: boolean;
   is_my_entry?: boolean;
+  uploaded_by?: string;
   media_base64?: string[] | string;
   tags?: Array<{ name: { en: string } }> | string[];
   distance?: number;
@@ -45,6 +46,7 @@ export interface EntryData {
   google_place_id?: string;
   draft?: number;
   tags?: string[];
+  uploaded_by?: string;
   rating?: number;
   review?: string;
 }

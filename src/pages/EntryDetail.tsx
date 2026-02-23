@@ -195,7 +195,7 @@ const EntryDetail = observer(function EntryDetail() {
               <div className="flex items-center gap-3 text-sm text-text-secondary mb-4">
                 <span className="flex items-center gap-1">
                   <User className="w-4 h-4" />
-                  {userStore.displayName}
+                  {entry.uploaded_by || 'Unknown'}
                 </span>
                 {entry.createdAt && (
                   <>
