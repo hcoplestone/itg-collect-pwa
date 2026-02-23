@@ -54,3 +54,8 @@ export const useFeedbackStore = () => {
   const { feedbackStore } = useStores();
   return feedbackStore;
 };
+
+export const useSyncStore = () => {
+  const { syncStore } = useStores();
+  return syncStore;
+};

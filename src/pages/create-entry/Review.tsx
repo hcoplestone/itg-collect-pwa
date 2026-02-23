@@ -1,16 +1,22 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { useDraftsStore, useEntriesStore } from '@/stores';
+import { useDraftsStore, useEntriesStore, useAppStore, useSyncStore } from '@/stores';
+import { useToast } from '@/hooks/useToast';
 import { entriesApi } from '@/api/entries';
 import { WizardLayout } from '@/components/entries/WizardLayout';
 import { LeafletMap } from '@/components/maps/LeafletMap';
-import { Star, Loader2, CheckCircle } from 'lucide-react';
+import { Star, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { successCheckVariants, successRingVariants, fadeUpVariants } from '@/lib/animations';
 
 const Review = observer(function Review() {
   const navigate = useNavigate();
   const draftsStore = useDraftsStore();
   const entriesStore = useEntriesStore();
+  const appStore = useAppStore();
+  const syncStore = useSyncStore();
+  const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -41,11 +47,30 @@ const Review = observer(function Review() {
       setSuccess(true);
       setTimeout(() => {
         draftsStore.removeCurrentDraft();
-        navigate(`/entry/${response.data.id}`, { replace: true });
+        navigate(`/entry/${response.data.id}`, { replace: true, state: { fromWizard: true } });
       }, 1500);
     } catch (error) {
       console.error('Error creating entry:', error);
-      alert('Failed to create entry. Please try again.');
+      if (!appStore.isOnline) {
+        const draft = draftsStore.currentDraft;
+        if (draft) {
+          syncStore.queueSubmission({
+            lat: draft.lat,
+            lng: draft.lng,
+            name: draft.name,
+            description: draft.description,
+            rating: draft.rating,
+            review: draft.review,
+            tags: draft.tags,
+            media_base64: draft.media.length > 0 ? draft.media : undefined,
+          });
+          toast.info('Entry queued for upload when you\'re back online');
+          draftsStore.removeCurrentDraft();
+          navigate('/home', { replace: true });
+          return;
+        }
+      }
+      toast.error('Failed to create entry. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -57,9 +82,34 @@ const Review = observer(function Review() {
 
   if (success) {
     return (
-      <div className="flex flex-col h-dvh w-full bg-primary items-center justify-center">
-        <CheckCircle className="w-16 h-16 text-success mb-4" />
-        <p className="text-lg font-bold text-accent">Entry saved successfully!</p>
+      <div role="status" aria-live="polite" className="flex flex-col h-dvh w-full bg-primary items-center justify-center">
+        <div className="relative flex items-center justify-center mb-4">
+          <motion.div
+            className="absolute w-16 h-16 rounded-full border-4 border-success"
+            variants={successRingVariants}
+            initial="hidden"
+            animate="visible"
+          />
+          <motion.div
+            variants={successCheckVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <svg className="w-16 h-16 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M8 12l3 3 5-5" />
+            </svg>
+          </motion.div>
+        </div>
+        <motion.p
+          className="text-lg font-bold text-accent"
+          variants={fadeUpVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.3 }}
+        >
+          Entry saved successfully!
+        </motion.p>
       </div>
     );
   }
@@ -158,7 +208,7 @@ const Review = observer(function Review() {
         </div>
 
         {submitting && (
-          <div className="flex items-center justify-center gap-2 py-4">
+          <div role="status" aria-live="polite" className="flex items-center justify-center gap-2 py-4">
             <Loader2 className="w-5 h-5 animate-spin text-accent" />
             <span className="text-sm text-accent">Creating entry...</span>
           </div>

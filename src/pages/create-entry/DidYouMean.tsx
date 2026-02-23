@@ -5,6 +5,8 @@ import { useDraftsStore } from '@/stores';
 import { locationSuggestionsApi } from '@/api/location-suggestions';
 import { WizardLayout } from '@/components/entries/WizardLayout';
 import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { TAP_SCALE, fadeUpVariants, staggerContainer } from '@/lib/animations';
 import type { GooglePlace } from '@/types';
 
 const DidYouMean = observer(function DidYouMean() {
@@ -41,11 +43,11 @@ const DidYouMean = observer(function DidYouMean() {
   const handleSelectSuggestion = (place: GooglePlace) => {
     draftsStore.setGooglePlace(place);
     draftsStore.setName(place.name);
-    navigate('/create-entry/details');
+    navigate('/create-entry/details', { state: { direction: 1 } });
   };
 
   const handleKeepOriginal = () => {
-    navigate('/create-entry/details');
+    navigate('/create-entry/details', { state: { direction: 1 } });
   };
 
   return (
@@ -64,21 +66,28 @@ const DidYouMean = observer(function DidYouMean() {
             <Loader2 className="w-6 h-6 animate-spin text-accent" />
           </div>
         ) : suggestions.length > 0 ? (
-          <div className="flex flex-col gap-2 mb-4">
+          <motion.div
+            className="flex flex-col gap-2 mb-4"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
             <p className="text-sm text-text-secondary mb-1">Did you mean one of these?</p>
             {suggestions.map((place) => (
-              <button
+              <motion.button
                 key={place.place_id}
+                variants={fadeUpVariants}
                 onClick={() => handleSelectSuggestion(place)}
+                whileTap={TAP_SCALE}
                 className="w-full text-left p-4 bg-secondary rounded-lg hover:bg-secondary-dark transition-colors"
               >
                 <p className="text-sm font-medium text-accent">{place.name}</p>
                 {place.vicinity && (
                   <p className="text-xs text-text-secondary">{place.vicinity}</p>
                 )}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         ) : (
           <p className="text-sm text-text-secondary mb-4">
             No alternative suggestions found.

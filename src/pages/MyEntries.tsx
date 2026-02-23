@@ -3,7 +3,9 @@ import { observer } from 'mobx-react-lite';
 import { useEntriesStore } from '@/stores';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { Header } from '@/components/layout/Header';
+import { AnimatedPage } from '@/components/layout/AnimatedPage';
 import { EntryList } from '@/components/entries/EntryList';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { LeafletMap } from '@/components/maps/LeafletMap';
 import { useNavigate } from 'react-router-dom';
 import { List, Map as MapIcon } from 'lucide-react';
@@ -33,6 +35,7 @@ const MyEntries = observer(function MyEntries() {
   };
 
   return (
+    <AnimatedPage>
     <div className="flex flex-col h-dvh w-full bg-primary">
       <Header title="My Entries" showBack />
 
@@ -66,7 +69,11 @@ const MyEntries = observer(function MyEntries() {
 
       {viewMode === 'list' ? (
         <div className="flex-1 px-4 py-2 overflow-y-auto w-full">
-          <EntryList entries={entries} showDistance emptyMessage="You haven't created any entries yet" />
+          {entriesStore.error ? (
+            <ErrorState message={entriesStore.error} onRetry={() => entriesStore.fetch(true)} />
+          ) : (
+            <EntryList entries={entries} isLoading={entriesStore.isLoading} showDistance emptyMessage="You haven't created any entries yet" />
+          )}
         </div>
       ) : (
         <div className="flex-1">
@@ -86,6 +93,7 @@ const MyEntries = observer(function MyEntries() {
         </div>
       )}
     </div>
+    </AnimatedPage>
   );
 });
 

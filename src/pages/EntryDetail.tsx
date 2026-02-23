@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useEntriesStore, useUserStore } from '@/stores';
 import { entriesApi } from '@/api/entries';
@@ -16,6 +16,8 @@ import { getRelativeTime } from '@/utils/time';
 const EntryDetail = observer(function EntryDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromWizard = (location.state as any)?.fromWizard === true;
   const entriesStore = useEntriesStore();
   const userStore = useUserStore();
   const [entry, setEntry] = useState<Entry | null>(null);
@@ -97,7 +99,7 @@ const EntryDetail = observer(function EntryDetail() {
   if (loading) {
     return (
       <div className="flex flex-col h-dvh w-full bg-primary">
-        <Header title="Loading..." showBack />
+        <Header title="Loading..." showBack onBack={fromWizard ? () => navigate('/home', { replace: true }) : undefined} />
         <div className="flex-1 flex items-center justify-center w-full">
           <Loader2 className="w-8 h-8 animate-spin text-accent" />
         </div>
@@ -108,7 +110,7 @@ const EntryDetail = observer(function EntryDetail() {
   if (!entry) {
     return (
       <div className="flex flex-col h-dvh w-full bg-primary">
-        <Header title="Entry" showBack />
+        <Header title="Entry" showBack onBack={fromWizard ? () => navigate('/home', { replace: true }) : undefined} />
         <div className="flex-1 flex items-center justify-center w-full">
           <p className="text-text-secondary">Entry not found</p>
         </div>
@@ -129,10 +131,12 @@ const EntryDetail = observer(function EntryDetail() {
         <Header
           title={entry.name}
           showBack
+          onBack={fromWizard ? () => navigate('/home', { replace: true }) : undefined}
           rightAction={
             <motion.button
               onClick={handleToggleFav}
               whileTap={TAP_SCALE}
+              aria-label={isFav ? 'Remove from favourites' : 'Add to favourites'}
               className="p-2"
             >
               <motion.div
@@ -162,6 +166,7 @@ const EntryDetail = observer(function EntryDetail() {
                     <button
                       key={i}
                       onClick={() => setCurrentPhotoIndex(i)}
+                      aria-label={`View photo ${i + 1}`}
                       className={`w-2 h-2 rounded-full ${
                         i === currentPhotoIndex ? 'bg-white' : 'bg-white/50'
                       }`}

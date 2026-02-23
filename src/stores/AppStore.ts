@@ -1,15 +1,32 @@
 import { makeAutoObservable } from 'mobx';
 import type { RootStore } from './RootStore';
 
+export interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  duration: number;
+}
+
 export class AppStore {
   rootStore: RootStore;
   theme: 'light' | 'dark' = 'light';
   isOnline = true;
   notifications: string[] = [];
+  toasts: Toast[] = [];
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+  }
+
+  showToast(message: string, type: Toast['type'] = 'info', duration = 3000) {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    this.toasts.push({ id, message, type, duration });
+  }
+
+  dismissToast(id: string) {
+    this.toasts = this.toasts.filter((t) => t.id !== id);
   }
 
   toggleTheme() {
@@ -40,6 +57,7 @@ export class AppStore {
     this.theme = 'light';
     this.isOnline = true;
     this.notifications = [];
+    this.toasts = [];
   }
 
   get notificationCount() {

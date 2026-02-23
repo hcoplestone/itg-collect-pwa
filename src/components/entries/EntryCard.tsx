@@ -1,9 +1,11 @@
 import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
+import { motion } from 'framer-motion';
 import { EntryThumbnail } from './EntryThumbnail';
 import { EntryCategoryIcon } from './EntryCategoryIcon';
 import { getRelativeTime } from '@/utils/time';
+import { TAP_SCALE, fadeUpVariants } from '@/lib/animations';
 import type { Entry } from '@/types';
 
 interface EntryCardProps {
@@ -20,8 +22,10 @@ export const EntryCard = observer(function EntryCard({ entry, showDistance, show
   };
 
   return (
-    <div
+    <motion.div
       onClick={handleClick}
+      whileTap={TAP_SCALE}
+      variants={fadeUpVariants}
       className="flex items-center gap-3 p-3 bg-transparent rounded-lg cursor-pointer hover:bg-secondary-dark/30 transition-colors"
     >
       {showThumbnails ? (
@@ -46,6 +50,6 @@ export const EntryCard = observer(function EntryCard({ entry, showDistance, show
         )}
         <ChevronRight className="w-4 h-4 text-text-secondary" />
       </div>
-    </div>
+    </motion.div>
   );
 });

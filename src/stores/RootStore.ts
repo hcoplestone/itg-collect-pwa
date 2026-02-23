@@ -3,6 +3,7 @@ import { AppStore } from './AppStore';
 import { DraftsStore } from './DraftsStore';
 import { EntriesStore } from './EntriesStore';
 import { FeedbackStore } from './FeedbackStore';
+import { SyncStore } from './SyncStore';
 import { UserStore } from './UserStore';
 
 export class RootStore {
@@ -11,6 +12,7 @@ export class RootStore {
   draftsStore: DraftsStore;
   entriesStore: EntriesStore;
   feedbackStore: FeedbackStore;
+  syncStore: SyncStore;
 
   constructor() {
     this.userStore = new UserStore(this);
@@ -18,6 +20,7 @@ export class RootStore {
     this.draftsStore = new DraftsStore(this);
     this.entriesStore = new EntriesStore(this);
     this.feedbackStore = new FeedbackStore(this);
+    this.syncStore = new SyncStore(this);
 
     makeAutoObservable(this);
   }
@@ -28,5 +31,6 @@ export class RootStore {
     this.draftsStore.reset();
     this.entriesStore.reset();
     this.feedbackStore.reset();
+    this.syncStore.reset();
   }
 }

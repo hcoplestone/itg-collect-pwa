@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useFeedbackStore } from '@/stores';
+import { useToast } from '@/hooks/useToast';
 import { feedbackApi } from '@/api/feedback';
 import { Header } from '@/components/layout/Header';
+import { AnimatedPage } from '@/components/layout/AnimatedPage';
 import { PhotoPicker } from '@/components/photos/PhotoPicker';
 import { PhotoGrid } from '@/components/photos/PhotoGrid';
 import { Loader2, Camera } from 'lucide-react';
@@ -11,13 +13,14 @@ import { Loader2, Camera } from 'lucide-react';
 const Feedback = observer(function Feedback() {
   const navigate = useNavigate();
   const feedbackStore = useFeedbackStore();
+  const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async () => {
     const { isValid, errors } = feedbackStore.validate();
     if (!isValid) {
-      alert(errors[0]);
+      toast.warning(errors[0]);
       return;
     }
 
@@ -28,7 +31,7 @@ const Feedback = observer(function Feedback() {
       feedbackStore.reset();
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      alert('Failed to submit feedback. Please try again.');
+      toast.error('Failed to submit feedback. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -62,6 +65,7 @@ const Feedback = observer(function Feedback() {
   }
 
   return (
+    <AnimatedPage>
     <div className="flex flex-col h-full">
       <Header title="Feedback" showLogo />
 
@@ -122,6 +126,7 @@ const Feedback = observer(function Feedback() {
         </button>
       </div>
     </div>
+    </AnimatedPage>
   );
 });
 

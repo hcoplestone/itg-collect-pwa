@@ -1,3 +1,6 @@
+import { motion } from 'framer-motion';
+import { TAP_SCALE_SM } from '@/lib/animations';
+
 interface CategoryPillProps {
   category: string;
   isActive?: boolean;
@@ -6,8 +9,9 @@ interface CategoryPillProps {
 
 export function CategoryPill({ category, isActive, onClick }: CategoryPillProps) {
   return (
-    <button
+    <motion.button
       onClick={onClick}
+      whileTap={TAP_SCALE_SM}
       className={`px-4 py-1.5 rounded-[15px] text-xs capitalize whitespace-nowrap transition-colors ${
         isActive
           ? 'bg-accent text-white font-bold'
@@ -15,6 +19,6 @@ export function CategoryPill({ category, isActive, onClick }: CategoryPillProps)
       }`}
     >
       {category}
-    </button>
+    </motion.button>
   );
 }

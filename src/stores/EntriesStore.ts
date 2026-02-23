@@ -15,6 +15,7 @@ export class EntriesStore {
   isLoading = false;
   error: string | null = null;
   recentlyAddedUpdateKey = 0;
+  lastFetchSource: 'cache' | 'network' = 'network';
 
   // Media cache for individual entry thumbnails
   mediaCache: Map<string, string[]> = new Map();
@@ -98,6 +99,7 @@ export class EntriesStore {
           this.entries = cachedEntries;
           this.isLoading = false;
           this.error = null;
+          this.lastFetchSource = 'cache';
           this.recentlyAddedUpdateKey++;
         });
         return;
@@ -127,6 +129,7 @@ export class EntriesStore {
           };
         });
         this.isLoading = false;
+        this.lastFetchSource = 'network';
         this.recentlyAddedUpdateKey++;
       });
 
@@ -426,6 +429,10 @@ export class EntriesStore {
     return filtered;
   }
 
+  get isStale(): boolean {
+    return this.lastFetchSource === 'cache' && !this.rootStore.appStore.isOnline;
+  }
+
   get allCategories(): string[] {
     const categories = new Set<string>();
     this.entries.forEach(entry => {
@@ -459,6 +466,7 @@ export class EntriesStore {
     this.isLoading = false;
     this.error = null;
     this.recentlyAddedUpdateKey = 0;
+    this.lastFetchSource = 'network';
     this.clearFilters();
     this.clearCache();
     this.mediaCache.clear();

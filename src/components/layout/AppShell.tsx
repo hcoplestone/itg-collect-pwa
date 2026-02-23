@@ -1,15 +1,18 @@
 import { Outlet } from 'react-router-dom';
 import { TabBar } from './TabBar';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 import { useServiceWorkerUpdate } from '@/hooks/useServiceWorkerUpdate';
-import { useAppStore } from '@/stores';
+import { useAppStore, useSyncStore } from '@/stores';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export const AppShell = observer(function AppShell() {
   const appStore = useAppStore();
+  const syncStore = useSyncStore();
   const isOnline = useOnlineStatus();
+  const wasOffline = useRef(false);
   const { isInstallable, isIOSSafari, promptInstall } = useInstallPrompt();
   const { needRefresh, updating, triggerUpdate } = useServiceWorkerUpdate();
   const [installDismissed, setInstallDismissed] = useState(false);
@@ -25,7 +28,11 @@ export const AppShell = observer(function AppShell() {
 
   useEffect(() => {
     appStore.setOnlineStatus(isOnline);
-  }, [isOnline, appStore]);
+    if (isOnline && wasOffline.current) {
+      syncStore.processPendingSubmissions();
+    }
+    wasOffline.current = !isOnline;
+  }, [isOnline, appStore, syncStore]);
 
   if (updating) {
     return (
@@ -52,9 +59,17 @@ export const AppShell = observer(function AppShell() {
 
   return (
     <div className="flex flex-col h-dvh w-full bg-primary relative">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[9999] focus:bg-accent focus:text-secondary focus:px-4 focus:py-2 focus:rounded-md focus:top-2 focus:left-2">
+        Skip to content
+      </a>
       {!isOnline && (
-        <div className="bg-danger text-white text-center py-1 text-sm font-medium shrink-0">
+        <div role="alert" aria-live="assertive" className="bg-danger text-white text-center py-1 text-sm font-medium shrink-0">
           You are offline
+        </div>
+      )}
+      {syncStore.pendingCount > 0 && (
+        <div aria-live="polite" className="bg-warning/20 text-accent text-center py-1 text-sm font-medium shrink-0">
+          {syncStore.pendingCount} {syncStore.pendingCount === 1 ? 'entry' : 'entries'} waiting to sync
         </div>
       )}
       {needRefresh && (
@@ -98,8 +113,10 @@ export const AppShell = observer(function AppShell() {
           )}
         </div>
       )}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
-        <Outlet />
+      <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden">
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <TabBar />
     </div>

@@ -2,18 +2,24 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useDraftsStore } from '@/stores';
+import { useToast } from '@/hooks/useToast';
 import { locationSuggestionsApi } from '@/api/location-suggestions';
 import { WizardLayout } from '@/components/entries/WizardLayout';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { Search, MapPin, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { TAP_SCALE, fadeUpVariants, staggerContainer } from '@/lib/animations';
 import type { GooglePlace } from '@/types';
 
 const Location = observer(function Location() {
   const navigate = useNavigate();
   const draftsStore = useDraftsStore();
   const [activeTab, setActiveTab] = useState<'suggestions' | 'manual'>('suggestions');
+  const toast = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<GooglePlace[]>([]);
   const [loading, setLoading] = useState(false);
+  const [suggestionsError, setSuggestionsError] = useState(false);
   const [manualName, setManualName] = useState(draftsStore.name);
 
   useEffect(() => {
@@ -24,6 +30,7 @@ const Location = observer(function Location() {
   const fetchSuggestions = async (query = '') => {
     if (!draftsStore.lat || !draftsStore.lng) return;
     setLoading(true);
+    setSuggestionsError(false);
     try {
       const response = await locationSuggestionsApi.getSuggestions(
         draftsStore.lat,
@@ -34,6 +41,7 @@ const Location = observer(function Location() {
       setSuggestions(data?.results ?? []);
     } catch (error) {
       console.error('Error fetching suggestions:', error);
+      setSuggestionsError(true);
     } finally {
       setLoading(false);
     }
@@ -50,17 +58,17 @@ const Location = observer(function Location() {
       draftsStore.setLat(place.geometry.location.lat);
       draftsStore.setLng(place.geometry.location.lng);
     }
-    navigate('/create-entry/details');
+    navigate('/create-entry/details', { state: { direction: 1 } });
   };
 
   const handleNext = () => {
     if (activeTab === 'manual') {
       if (!manualName.trim()) {
-        alert('Please enter a name');
+        toast.warning('Please enter a name');
         return;
       }
       draftsStore.setName(manualName);
-      navigate('/create-entry/did-you-mean');
+      navigate('/create-entry/did-you-mean', { state: { direction: 1 } });
     }
   };
 
@@ -116,12 +124,22 @@ const Location = observer(function Location() {
             <div className="flex justify-center py-8">
               <Loader2 className="w-6 h-6 animate-spin text-accent" />
             </div>
+          ) : suggestionsError ? (
+            <ErrorState message="Failed to load suggestions" onRetry={() => fetchSuggestions(searchQuery)} />
           ) : (
-            <div className="flex flex-col gap-2">
+            <motion.div
+              className="flex flex-col gap-2"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              key={suggestions.length}
+            >
               {suggestions.map((place) => (
-                <button
+                <motion.button
                   key={place.place_id}
+                  variants={fadeUpVariants}
                   onClick={() => handleSelectSuggestion(place)}
+                  whileTap={TAP_SCALE}
                   className="flex items-start gap-3 p-3 bg-secondary rounded-lg text-left hover:bg-secondary-dark transition-colors"
                 >
                   <MapPin className="w-4 h-4 text-accent mt-0.5 shrink-0" />
@@ -131,14 +149,14 @@ const Location = observer(function Location() {
                       <p className="text-xs text-text-secondary">{place.vicinity}</p>
                     )}
                   </div>
-                </button>
+                </motion.button>
               ))}
               {suggestions.length === 0 && !loading && (
                 <p className="text-sm text-text-secondary text-center py-4">
                   No suggestions found. Try searching or use manual entry.
                 </p>
               )}
-            </div>
+            </motion.div>
           )}
         </div>
       )}

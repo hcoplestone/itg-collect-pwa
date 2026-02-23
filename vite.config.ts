@@ -44,6 +44,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        navigateFallback: '/offline.html',
         runtimeCaching: [
           {
             urlPattern: /\/api\/entries/,
