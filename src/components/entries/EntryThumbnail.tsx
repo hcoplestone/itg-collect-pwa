@@ -26,7 +26,7 @@ export const EntryThumbnail = observer(function EntryThumbnail({
   // Still loading
   if (media === undefined) {
     return (
-      <div className={`${size} rounded-md bg-primary-light shrink-0 animate-pulse ${className}`} />
+      <div className={`${size} rounded-md bg-primary-light shrink-0 animate-shimmer ${className}`} />
     );
   }
 

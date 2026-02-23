@@ -1,27 +1,34 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { AuthGuard } from '@/components/layout/AuthGuard';
+import { PageLoadingFallback } from '@/components/ui/PageLoadingFallback';
 
 import Welcome from '@/pages/Welcome';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
-import Home from '@/pages/Home';
-import Explore from '@/pages/Explore';
-import Account from '@/pages/Account';
-import Feedback from '@/pages/Feedback';
-import FeedbackScreenshots from '@/pages/FeedbackScreenshots';
-import EntryDetail from '@/pages/EntryDetail';
-import MyEntries from '@/pages/MyEntries';
-import MyFavourites from '@/pages/MyFavourites';
-import Drafts from '@/pages/Drafts';
 
-import MapSelect from '@/pages/create-entry/MapSelect';
-import Location from '@/pages/create-entry/Location';
-import DidYouMean from '@/pages/create-entry/DidYouMean';
-import Details from '@/pages/create-entry/Details';
-import Tags from '@/pages/create-entry/Tags';
-import Photos from '@/pages/create-entry/Photos';
-import Review from '@/pages/create-entry/Review';
+const Home = lazy(() => import('@/pages/Home'));
+const Explore = lazy(() => import('@/pages/Explore'));
+const Account = lazy(() => import('@/pages/Account'));
+const Feedback = lazy(() => import('@/pages/Feedback'));
+const FeedbackScreenshots = lazy(() => import('@/pages/FeedbackScreenshots'));
+const EntryDetail = lazy(() => import('@/pages/EntryDetail'));
+const MyEntries = lazy(() => import('@/pages/MyEntries'));
+const MyFavourites = lazy(() => import('@/pages/MyFavourites'));
+const Drafts = lazy(() => import('@/pages/Drafts'));
+
+const MapSelect = lazy(() => import('@/pages/create-entry/MapSelect'));
+const Location = lazy(() => import('@/pages/create-entry/Location'));
+const DidYouMean = lazy(() => import('@/pages/create-entry/DidYouMean'));
+const Details = lazy(() => import('@/pages/create-entry/Details'));
+const Tags = lazy(() => import('@/pages/create-entry/Tags'));
+const Photos = lazy(() => import('@/pages/create-entry/Photos'));
+const Review = lazy(() => import('@/pages/create-entry/Review'));
+
+function SuspenseWrapper({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<PageLoadingFallback />}>{children}</Suspense>;
+}
 
 export const router = createBrowserRouter([
   // Public routes
@@ -36,28 +43,28 @@ export const router = createBrowserRouter([
       {
         element: <AppShell />,
         children: [
-          { path: '/home', element: <Home /> },
-          { path: '/explore', element: <Explore /> },
-          { path: '/feedback', element: <Feedback /> },
-          { path: '/account', element: <Account /> },
-          { path: '/drafts', element: <Drafts /> },
+          { path: '/home', element: <SuspenseWrapper><Home /></SuspenseWrapper> },
+          { path: '/explore', element: <SuspenseWrapper><Explore /></SuspenseWrapper> },
+          { path: '/feedback', element: <SuspenseWrapper><Feedback /></SuspenseWrapper> },
+          { path: '/account', element: <SuspenseWrapper><Account /></SuspenseWrapper> },
+          { path: '/drafts', element: <SuspenseWrapper><Drafts /></SuspenseWrapper> },
         ],
       },
 
       // Full-screen authenticated routes (no tab bar)
-      { path: '/entry/:id', element: <EntryDetail /> },
-      { path: '/my-entries', element: <MyEntries /> },
-      { path: '/my-favourites', element: <MyFavourites /> },
-      { path: '/feedback-screenshots', element: <FeedbackScreenshots /> },
+      { path: '/entry/:id', element: <SuspenseWrapper><EntryDetail /></SuspenseWrapper> },
+      { path: '/my-entries', element: <SuspenseWrapper><MyEntries /></SuspenseWrapper> },
+      { path: '/my-favourites', element: <SuspenseWrapper><MyFavourites /></SuspenseWrapper> },
+      { path: '/feedback-screenshots', element: <SuspenseWrapper><FeedbackScreenshots /></SuspenseWrapper> },
 
       // Entry creation wizard
-      { path: '/create-entry/map-select', element: <MapSelect /> },
-      { path: '/create-entry/location', element: <Location /> },
-      { path: '/create-entry/did-you-mean', element: <DidYouMean /> },
-      { path: '/create-entry/details', element: <Details /> },
-      { path: '/create-entry/tags', element: <Tags /> },
-      { path: '/create-entry/photos', element: <Photos /> },
-      { path: '/create-entry/review', element: <Review /> },
+      { path: '/create-entry/map-select', element: <SuspenseWrapper><MapSelect /></SuspenseWrapper> },
+      { path: '/create-entry/location', element: <SuspenseWrapper><Location /></SuspenseWrapper> },
+      { path: '/create-entry/did-you-mean', element: <SuspenseWrapper><DidYouMean /></SuspenseWrapper> },
+      { path: '/create-entry/details', element: <SuspenseWrapper><Details /></SuspenseWrapper> },
+      { path: '/create-entry/tags', element: <SuspenseWrapper><Tags /></SuspenseWrapper> },
+      { path: '/create-entry/photos', element: <SuspenseWrapper><Photos /></SuspenseWrapper> },
+      { path: '/create-entry/review', element: <SuspenseWrapper><Review /></SuspenseWrapper> },
     ],
   },
 

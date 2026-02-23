@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useDraftsStore } from '@/stores';
 import { WizardLayout } from '@/components/entries/WizardLayout';
+import { motion } from 'framer-motion';
+import { TAP_SCALE_SM, fadeUpVariants, staggerContainer, tagToggleTransition } from '@/lib/animations';
 
 const TAG_OPTIONS = [
   'See/Do',
@@ -36,7 +38,7 @@ const Tags = observer(function Tags() {
 
   const handleNext = () => {
     draftsStore.setTags(selectedTags);
-    navigate('/create-entry/photos');
+    navigate('/create-entry/photos', { state: { direction: 1 } });
   };
 
   return (
@@ -51,13 +53,22 @@ const Tags = observer(function Tags() {
           Select the categories that best describe this location
         </p>
 
-        <div className="flex flex-wrap gap-2">
+        <motion.div
+          className="flex flex-wrap gap-2"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
           {TAG_OPTIONS.map((tag) => {
             const isSelected = selectedTags.includes(tag);
             return (
-              <button
+              <motion.button
                 key={tag}
+                variants={fadeUpVariants}
                 onClick={() => handleToggleTag(tag)}
+                whileTap={TAP_SCALE_SM}
+                animate={{ scale: isSelected ? [1, 1.08, 1] : 1 }}
+                transition={tagToggleTransition}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   isSelected
                     ? 'bg-accent text-secondary'
@@ -65,10 +76,10 @@ const Tags = observer(function Tags() {
                 }`}
               >
                 {tag}
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </WizardLayout>
   );

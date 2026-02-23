@@ -8,7 +8,7 @@ const Details = observer(function Details() {
   const draftsStore = useDraftsStore();
 
   const handleNext = () => {
-    navigate('/create-entry/tags');
+    navigate('/create-entry/tags', { state: { direction: 1 } });
   };
 
   return (

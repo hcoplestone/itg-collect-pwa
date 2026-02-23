@@ -1,5 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { TAP_SCALE } from '@/lib/animations';
 
 interface HeaderProps {
   title: string;
@@ -30,12 +32,14 @@ export function Header({ title, showBack = false, showLogo = false, onBack, righ
       <div className="flex items-center px-4 pb-2 pt-3">
         <div className="w-10">
           {showBack && (
-            <button
+            <motion.button
               onClick={handleBack}
+              whileTap={TAP_SCALE}
+              aria-label="Go back"
               className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary shadow-sm hover:bg-secondary-dark transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-accent" />
-            </button>
+            </motion.button>
           )}
         </div>
         <h1 className="flex-1 text-center text-lg font-semibold text-accent truncate">

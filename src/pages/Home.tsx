@@ -7,6 +7,7 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { LeafletMap } from '@/components/maps/LeafletMap';
 import { EntryCard } from '@/components/entries/EntryCard';
 import { CategoryPill } from '@/components/entries/CategoryPill';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { Search, Loader2 } from 'lucide-react';
 import type { Entry } from '@/types';
 
@@ -159,6 +160,9 @@ const Home = observer(function Home() {
           <div className="px-4 pb-3">
             <h3 className="text-2xl font-bold text-accent text-center">Recently Added</h3>
             <p className="text-sm text-text-secondary text-center mt-0.5">{countLabel}</p>
+            {entriesStore.isStale && (
+              <p className="text-xs text-warning text-center mt-1">Showing cached data</p>
+            )}
           </div>
         </div>
 
@@ -167,7 +171,9 @@ const Home = observer(function Home() {
           className="px-4 pb-4 overflow-y-auto"
           style={{ maxHeight: listMaxHeight }}
         >
-          {recentEntries.length === 0 ? (
+          {entriesStore.error ? (
+            <ErrorState message={entriesStore.error} onRetry={() => entriesStore.fetch(true)} />
+          ) : recentEntries.length === 0 ? (
             <p className="text-xs text-text-secondary text-center">No entries yet</p>
           ) : (
             <div className="flex flex-col gap-2">

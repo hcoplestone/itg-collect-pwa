@@ -20,7 +20,7 @@ const Photos = observer(function Photos() {
   };
 
   const handleNext = () => {
-    navigate('/create-entry/review');
+    navigate('/create-entry/review', { state: { direction: 1 } });
   };
 
   return (

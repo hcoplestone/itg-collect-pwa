@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useDraftsStore } from '@/stores';
+import { useToast } from '@/hooks/useToast';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { InteractiveMap } from '@/components/maps/InteractiveMap';
 import { WizardLayout } from '@/components/entries/WizardLayout';
@@ -10,6 +11,7 @@ import { Crosshair } from 'lucide-react';
 const MapSelect = observer(function MapSelect() {
   const navigate = useNavigate();
   const draftsStore = useDraftsStore();
+  const toast = useToast();
   const { latitude, longitude } = useGeolocation();
 
   useEffect(() => {
@@ -33,10 +35,10 @@ const MapSelect = observer(function MapSelect() {
 
   const handleNext = () => {
     if (!draftsStore.lat || !draftsStore.lng) {
-      alert('Please select a location on the map');
+      toast.warning('Please select a location on the map');
       return;
     }
-    navigate('/create-entry/location');
+    navigate('/create-entry/location', { state: { direction: 1 } });
   };
 
   const selectedLocation = draftsStore.lat && draftsStore.lng

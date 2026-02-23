@@ -5,6 +5,7 @@ interface UseImagePickerOptions {
   maxHeight?: number;
   quality?: number;
   multiple?: boolean;
+  onError?: (error: Error) => void;
 }
 
 export function useImagePicker(options: UseImagePickerOptions = {}) {
@@ -13,6 +14,7 @@ export function useImagePicker(options: UseImagePickerOptions = {}) {
     maxHeight = 1024,
     quality = 0.8,
     multiple = false,
+    onError,
   } = options;
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -75,13 +77,15 @@ export function useImagePicker(options: UseImagePickerOptions = {}) {
           resolve(results);
         } catch (error) {
           console.error('Error processing images:', error);
+          const err = error instanceof Error ? error : new Error('Failed to process images');
+          onError?.(err);
           resolve([]);
         }
       };
 
       input.click();
     });
-  }, [multiple, resizeImage]);
+  }, [multiple, resizeImage, onError]);
 
   return { pickImages };
 }
