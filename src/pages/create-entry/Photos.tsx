@@ -29,7 +29,7 @@ const Photos = observer(function Photos() {
       step={6}
       onNext={handleNext}
       nextLabel={draftsStore.media.length === 0 ? 'Skip' : 'Next'}
-      onBack={() => navigate('/create-entry/tags')}
+      onBack={() => navigate(-1)}
     >
       <div className="py-4">
         <p className="text-sm text-text-secondary mb-4">
